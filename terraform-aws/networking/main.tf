@@ -20,6 +20,9 @@ resource "aws_vpc" "mtc_vpc" {
   tags = {
     Name = "mtc_vpc-${random_integer.random.id}"
   }
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 
@@ -81,5 +84,28 @@ resource "aws_default_route_table" "mtc_private_rt" {
 
   tags = {
     Name = "mtc_private"
+  }
+}
+
+resource "aws_security_group" "mtc_sg" {
+  for_each    = var.security_groups
+  name        = each.value.name
+  description = each.value.description
+  vpc_id      = aws_vpc.mtc_vpc.id
+  dynamic "ingress" {
+    for_each = each.value.ingress
+    content {
+      from_port   = ingress.value.from
+      to_port     = ingress.value.to
+      protocol    = ingress.value.protocol
+      cidr_blocks = ingress.value.cidr_blocks
+    }
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
