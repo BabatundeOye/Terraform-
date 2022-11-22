@@ -49,13 +49,13 @@ resource "aws_security_group" "luit-cluster" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-   ingress {
-    from_port         = 80
-    to_port           = 80
-    protocol          = "tcp"
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-  } 
-  
+  }
+
   tags = {
     Name = "terraform-eks-luit"
   }
@@ -77,15 +77,15 @@ resource "aws_eks_cluster" "luit" {
 
   vpc_config {
     security_group_ids = [aws_security_group.luit-cluster.id]
-    subnet_ids = var.public_subnets
+    subnet_ids         = var.public_subnets
   }
 
-# Ensure that IAM Role permissions are created before and deleted after EKS Cluster handling.
-# Otherwise, EKS will not be able to properly delete EKS managed EC2 infrastructure such as Security Groups.
- 
- depends_on = [
-  aws_iam_role_policy_attachment.luit-cluster-AmazonEKSClusterPolicy,
-  aws_iam_role_policy_attachment.luit-cluster-AmazonEKSVPCResourceController,
- ]
+  # Ensure that IAM Role permissions are created before and deleted after EKS Cluster handling.
+  # Otherwise, EKS will not be able to properly delete EKS managed EC2 infrastructure such as Security Groups.
+
+  depends_on = [
+    aws_iam_role_policy_attachment.luit-cluster-AmazonEKSClusterPolicy,
+    aws_iam_role_policy_attachment.luit-cluster-AmazonEKSVPCResourceController,
+  ]
 }
 
