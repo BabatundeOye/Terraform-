@@ -1,1 +1,1 @@
-A repository of terraform projects and practice
+Teeraform - A repository of terraform projects and practice
